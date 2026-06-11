@@ -6,36 +6,28 @@
   <title>캐릭터 캘린더 체크리스트</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app-viewport" id="appViewport">
     <div class="app-frame" id="appFrame">
       <div class="app-shell" id="appShell">
-        <header class="top-panel">
-          <aside class="side-card left-actions">
-            <h2>캐릭터 액션</h2>
-            <div class="action-grid">
-              <button class="action-button" data-action="1">버튼 1</button>
-              <button class="action-button" data-action="2">버튼 2</button>
-              <button class="action-button" data-action="3">버튼 3</button>
-              <button class="action-button" data-action="4">버튼 4</button>
-              <button class="action-button" data-action="5">버튼 5</button>
-              <button class="action-button" data-action="6">버튼 6</button>
+        <div class="top-bar">
+          <div class="top-bar-shell">
+            <div class="top-bar-info">
+              <span class="top-bar-clock" id="topBarClock">오전 00 : 00</span>
+              <span class="top-bar-date" id="topBarDate">0월 00일 0요일</span>
             </div>
-          </aside>
+          </div>
+        </div>
 
+        <header class="top-panel">
           <section class="character-stage">
             <div class="stage-header">
               <div>
-                <p class="eyebrow">Character Space</p>
                 <h1>캐릭터 상호작용 공간</h1>
               </div>
-              <label class="auto-play">
-                <input type="checkbox" id="autoBehaviorToggle">
-                <span>자동 행동</span>
-              </label>
             </div>
 
             <div class="character-area" id="characterArea">
@@ -48,73 +40,75 @@
               >
             </div>
 
-            <div class="speech-box">
-              <p id="speechText">안녕하세요. 오늘의 일정과 체크리스트를 함께 관리해볼까요?</p>
+            <div class="speech-box" id="speechBox" tabindex="0" role="button" aria-expanded="false">
+              <div class="speech-preview" id="speechPreview"></div>
+              <div class="speech-log" id="speechLog">
+                <p id="speechText">안녕하세요. 오늘의 일정과 체크리스트를 함께 관리해볼까요?</p>
+              </div>
             </div>
           </section>
-
-          <aside class="side-card right-controls">
-            <h2>캐릭터 설정</h2>
-            <button id="personalityButton" class="primary-button">성격 선택</button>
-            <div id="personalityPanel" class="personality-panel hidden">
-              <label><input type="radio" name="personality" value="friendly" checked> 다정함</label>
-              <label><input type="radio" name="personality" value="playful"> 장난기</label>
-              <label><input type="radio" name="personality" value="calm"> 차분함</label>
-              <label><input type="radio" name="personality" value="energetic"> 활발함</label>
-            </div>
-
-            <label for="characterUpload" class="primary-button upload-button">캐릭터 추가/변경</label>
-            <input id="characterUpload" type="file" accept="image/*" hidden>
-
-            <div class="status-card">
-              <span>현재 성격</span>
-              <strong id="currentPersonalityLabel">다정함</strong>
-            </div>
-          </aside>
         </header>
 
         <main class="main-panel">
-          <aside class="memo-panel">
-            <div class="panel-title">
-              <p class="eyebrow">Memo</p>
-              <h2 id="selectedDateTitle">날짜를 선택해 주세요</h2>
-            </div>
-
-            <label class="field-label" for="taskInput">체크리스트 추가</label>
-            <div class="task-form">
-              <input id="taskInput" type="text" placeholder="예: 운동 30분 하기">
-              <button id="addTaskButton" class="primary-button">추가</button>
-            </div>
-
-            <ul id="taskList" class="task-list"></ul>
-
-            <label class="field-label" for="memoInput">메모</label>
-            <textarea id="memoInput" placeholder="선택한 날짜에 대한 메모를 적어주세요."></textarea>
-          </aside>
-
           <section class="calendar-panel">
             <div class="calendar-header">
-              <button id="prevMonth" class="nav-button" aria-label="이전 달">&lt;</button>
+              <button id="prevMonth" class="nav-button" aria-label="previous month">&lt;</button>
               <div>
                 <p class="eyebrow">Galaxy-style Calendar</p>
                 <h2 id="monthLabel"></h2>
               </div>
-              <button id="nextMonth" class="nav-button" aria-label="다음 달">&gt;</button>
+              <button id="nextMonth" class="nav-button" aria-label="next month">&gt;</button>
             </div>
 
             <div id="monthView" class="month-view"></div>
             <div id="agendaView" class="agenda-view hidden"></div>
           </section>
+        </main>
 
-          <aside class="view-panel">
+        <section class="bottom-tools">
+          <section class="bottom-tool checklist-tool">
+            <div class="panel-title">
+              <p class="eyebrow">Memo</p>
+              <h2 id="selectedDateTitle">날짜를 선택해 주세요</h2>
+            </div>
+            <label class="field-label" for="taskInput">체크리스트 추가</label>
+            <div class="task-form">
+              <input id="taskInput" type="text" placeholder="예: 운동 30분 하기">
+              <button id="addTaskButton" class="primary-button">추가</button>
+            </div>
+            <ul id="taskList" class="task-list"></ul>
+            <label class="field-label" for="memoInput">메모</label>
+            <textarea id="memoInput" placeholder="선택한 날짜에 대한 메모를 적어주세요."></textarea>
+          </section>
+
+          <section class="bottom-tool switch-tool hidden-view-tool" aria-hidden="true">
             <div class="panel-title">
               <p class="eyebrow">View</p>
               <h2>보기 전환</h2>
             </div>
             <button id="toggleViewButton" class="primary-button wide-button">표 보기로 전환</button>
-            <p class="helper-text">버튼을 누르면 중앙 달력이 월간 캘린더에서 세로 표 형태로 바뀝니다.</p>
-          </aside>
-        </main>
+            <p class="helper-text">버튼을 누르면 달력이 표 형식으로 바뀝니다.</p>
+          </section>
+        </section>
+
+        <footer class="bottom-bar" aria-hidden="true">
+          <div class="bottom-bar-shell">
+            <div class="bottom-bar-slot" data-slot="1"></div>
+            <div class="bottom-bar-slot" data-slot="2"></div>
+            <div class="bottom-bar-slot" data-slot="3">
+              <button class="bottom-bar-button" id="homeButton" type="button" aria-label="home">
+                <span class="bottom-bar-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" role="img" focusable="false">
+                    <path d="M12 4.5 4.5 10.7v8.1c0 .4.3.7.7.7h4.6v-5.2c0-.4.3-.7.7-.7h2.9c.4 0 .7.3.7.7v5.2h4.6c.4 0 .7-.3.7-.7v-8.1L12 4.5Z"></path>
+                  </svg>
+                </span>
+                <span class="bottom-bar-label">홈</span>
+              </button>
+            </div>
+            <div class="bottom-bar-slot" data-slot="4"></div>
+            <div class="bottom-bar-slot" data-slot="5"></div>
+          </div>
+        </footer>
       </div>
     </div>
   </div>
