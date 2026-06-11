@@ -218,12 +218,14 @@ function renderCalendar() {
   const firstDay = new Date(year, month, 1);
   const startOffset = firstDay.getDay();
   const startDate = new Date(year, month, 1 - startOffset);
+  const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+  const totalVisibleCells = getCalendarCellCount(startOffset, totalDaysInMonth);
   const weekdayHtml = `<div class="weekdays">${weekdays.map((day) => `<div class="weekday">${day}</div>`).join("")}</div>`;
   const daysHtml = [];
 
   monthLabel.textContent = `${year}년 ${month + 1}월`;
 
-  for (let index = 0; index < 42; index += 1) {
+  for (let index = 0; index < totalVisibleCells; index += 1) {
     const date = new Date(startDate);
     date.setDate(startDate.getDate() + index);
     const dateKey = formatDateKey(date);
@@ -246,6 +248,20 @@ function renderCalendar() {
   });
 
   renderAgendaView(year, month);
+}
+
+function getCalendarCellCount(startOffset, totalDaysInMonth) {
+  const needsSixRows = startOffset + totalDaysInMonth > 35;
+
+  if (!isMobileLayout()) {
+    return 42;
+  }
+
+  return needsSixRows ? 42 : 35;
+}
+
+function isMobileLayout() {
+  return window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)").matches;
 }
 
 function renderAgendaView(year, month) {
