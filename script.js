@@ -261,7 +261,7 @@ function getCalendarCellCount(startOffset, totalDaysInMonth) {
 }
 
 function isMobileLayout() {
-  return window.matchMedia("(max-width: 768px) and (hover: none) and (pointer: coarse)").matches;
+  return window.innerWidth <= 768 && navigator.maxTouchPoints > 0;
 }
 
 function renderAgendaView(year, month) {
