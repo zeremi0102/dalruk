@@ -872,7 +872,7 @@ textarea {
   }
 
   .calendar-grid {
-    max-height: 410px;
+    max-height: calc((70px * 5) + (4px * 4));
   }
 
   .calendar-day {
