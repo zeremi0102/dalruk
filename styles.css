@@ -635,7 +635,7 @@ textarea:disabled {
 }
 
 .calendar-grid {
-  max-height: 450px;
+  max-height: calc((78px * 5) + (6px * 4));
   overflow: hidden;
 }
 
