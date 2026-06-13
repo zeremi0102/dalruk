@@ -442,7 +442,6 @@ function buildDayPreview(entry) {
 
   if (entry.tasks?.length) {
     return entry.tasks
-      .slice(0, 2)
       .map((task, index) => {
         const colorName = taskPreviewColors[index % taskPreviewColors.length];
         const doneClass = task.done ? " is-done" : "";

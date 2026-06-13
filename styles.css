@@ -536,6 +536,7 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 .calendar-day:focus,
@@ -568,6 +569,16 @@ textarea {
   gap: 3px;
   align-items: stretch;
   min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-right: 1px;
+}
+
+.day-preview::-webkit-scrollbar {
+  display: none;
 }
 
 .day-task-chip,
@@ -634,6 +645,7 @@ textarea {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  min-height: 100%;
 }
 
 .agenda-view {
