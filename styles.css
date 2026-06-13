@@ -481,7 +481,8 @@ textarea:disabled {
 }
 
 .task-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
@@ -497,7 +498,6 @@ textarea:disabled {
 }
 
 .task-main {
-  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -505,8 +505,7 @@ textarea:disabled {
 
 .task-item-time-button,
 .task-item-time-editor {
-  width: 264px;
-  flex: 0 0 264px;
+  width: 100%;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px;
@@ -559,7 +558,6 @@ textarea:disabled {
 }
 
 .task-remove {
-  flex: 0 0 auto;
   margin-left: auto;
   background: transparent;
   color: var(--accent-deep);
