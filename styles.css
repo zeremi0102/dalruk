@@ -848,7 +848,7 @@ textarea:disabled {
   height: calc(100% - 34px);
   margin-bottom: 0;
   overflow-y: auto;
-  padding-top: 4px;
+  padding-top: 2px;
   padding-bottom: 18px;
 }
 
