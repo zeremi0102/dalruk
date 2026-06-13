@@ -36,6 +36,8 @@ let notesByDate = loadJson(storageKeys.notes, {});
 let selectedTaskIndex = null;
 let editingTaskTimeIndex = null;
 
+sortAllTaskEntries();
+
 restoreState();
 bindEvents();
 initializeSpeechLog();
@@ -427,8 +429,9 @@ function addTask() {
     return;
   }
 
-  entry.tasks.push({ text, time, done: false, memo: "" });
-  selectedTaskIndex = entry.tasks.length - 1;
+  const newTask = { text, time, done: false, memo: "" };
+  entry.tasks.push(newTask);
+  selectedTaskIndex = sortTasksByTime(entry.tasks, newTask);
   taskInput.value = "";
   taskHourInput.value = "";
   taskMinuteInput.value = "";
@@ -657,11 +660,13 @@ function commitTaskTimeEdit(index, hourValue, minuteValue) {
 
   if (nextTime !== null) {
     task.time = nextTime;
+    selectedTaskIndex = sortTasksByTime(entry.tasks, task);
     persistNotes();
     renderCalendar();
+  } else {
+    selectedTaskIndex = index;
   }
 
-  selectedTaskIndex = index;
   renderSelectedDate();
 }
 
@@ -705,6 +710,51 @@ function loadJson(key, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function sortAllTaskEntries() {
+  Object.values(notesByDate).forEach((entry) => {
+    if (entry?.tasks?.length) {
+      sortTasksByTime(entry.tasks);
+    }
+  });
+}
+
+function sortTasksByTime(tasks, activeTask = null) {
+  if (!Array.isArray(tasks) || tasks.length < 2) {
+    return activeTask ? tasks.indexOf(activeTask) : -1;
+  }
+
+  const taggedTasks = tasks.map((task, index) => ({ task, index }));
+  taggedTasks.sort((left, right) => {
+    const leftWeight = getTaskTimeWeight(left.task.time);
+    const rightWeight = getTaskTimeWeight(right.task.time);
+
+    if (leftWeight !== rightWeight) {
+      return leftWeight - rightWeight;
+    }
+
+    return left.index - right.index;
+  });
+
+  tasks.splice(0, tasks.length, ...taggedTasks.map((item) => item.task));
+  return activeTask ? tasks.indexOf(activeTask) : -1;
+}
+
+function getTaskTimeWeight(timeValue) {
+  if (!timeValue) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  const [hourText, minuteText] = String(timeValue).split(":");
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isInteger(hour) || !Number.isInteger(minute)) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  return hour * 60 + minute;
 }
 
 function smoothScrollToTop(duration = 900) {
