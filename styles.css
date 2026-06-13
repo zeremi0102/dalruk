@@ -721,7 +721,6 @@ textarea:disabled {
 .day-preview-empty {
   width: 100%;
   min-width: 0;
-  border-radius: 999px;
   display: flex;
   align-items: center;
   padding: 2px 6px;
@@ -730,10 +729,15 @@ textarea:disabled {
 }
 
 .day-task-chip {
+  border-radius: 0;
   --chip-fill: rgba(227, 155, 125, 0.22);
   background: var(--chip-fill);
   border: 1px solid var(--chip-fill);
   box-shadow: none;
+}
+
+.day-preview-empty {
+  border-radius: 999px;
 }
 
 .day-task-chip.is-done {
