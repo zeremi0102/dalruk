@@ -604,10 +604,12 @@ function openTimePicker(type, index = null) {
     : getEntryForSelectedDate().tasks?.[index]?.time || "";
   timePickerValue = parseTimeForPicker(currentTime);
   renderTimePickerColumns();
+  document.body.classList.add("time-picker-open");
   timePickerOverlay.classList.remove("hidden");
 }
 
 function closeTimePicker() {
+  document.body.classList.remove("time-picker-open");
   timePickerOverlay.classList.add("hidden");
 }
 

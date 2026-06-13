@@ -37,6 +37,11 @@ body {
   background: #efebe5;
 }
 
+body.time-picker-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
 button,
 input,
 textarea {
