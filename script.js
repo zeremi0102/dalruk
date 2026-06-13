@@ -81,6 +81,13 @@ function bindEvents() {
 
   addTaskButton.addEventListener("click", addTask);
 
+  [taskHourInput, taskMinuteInput].forEach((input) => {
+    input.addEventListener("input", () => {
+      const digitsOnly = input.value.replace(/\D/g, "").slice(0, 2);
+      input.value = digitsOnly;
+    });
+  });
+
   taskInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
