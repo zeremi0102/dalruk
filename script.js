@@ -2,6 +2,7 @@ const monthLabel = document.getElementById("monthLabel");
 const monthView = document.getElementById("monthView");
 const agendaView = document.getElementById("agendaView");
 const selectedDateTitle = document.getElementById("selectedDateTitle");
+const memoLabel = document.getElementById("memoLabel");
 const memoInput = document.getElementById("memoInput");
 const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
@@ -30,6 +31,7 @@ let currentDate = new Date();
 let selectedDate = formatDateKey(new Date());
 let isAgendaMode = false;
 let notesByDate = loadJson(storageKeys.notes, {});
+let selectedTaskIndex = null;
 
 restoreState();
 bindEvents();
@@ -61,7 +63,13 @@ function bindEvents() {
 
   memoInput.addEventListener("input", () => {
     const entry = getEntryForSelectedDate();
-    entry.memo = memoInput.value;
+    const activeTask = entry.tasks?.[selectedTaskIndex];
+
+    if (!activeTask) {
+      return;
+    }
+
+    activeTask.memo = memoInput.value;
     persistNotes();
     renderCalendar();
   });
@@ -294,7 +302,8 @@ function renderSelectedDate() {
   const entry = getEntryForSelectedDate();
 
   selectedDateTitle.textContent = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-  memoInput.value = entry.memo || "";
+  normalizeSelectedTask(entry);
+  syncTaskMemoEditor(entry);
   renderTaskList(entry.tasks || []);
 }
 
@@ -305,12 +314,19 @@ function renderTaskList(tasks) {
   }
 
   taskList.innerHTML = tasks.map((task, index) => `
-    <li class="task-item">
+    <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
       <input type="checkbox" data-index="${index}" ${task.done ? "checked" : ""}>
-      <span class="${task.done ? "done" : ""}">${task.text}</span>
+      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${task.text}</button>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
   `).join("");
+
+  taskList.querySelectorAll(".task-select").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedTaskIndex = Number(button.dataset.index);
+      renderSelectedDate();
+    });
+  });
 
   taskList.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
     checkbox.addEventListener("change", () => {
@@ -326,6 +342,7 @@ function renderTaskList(tasks) {
     button.addEventListener("click", () => {
       const entry = getEntryForSelectedDate();
       entry.tasks.splice(Number(button.dataset.index), 1);
+      normalizeSelectedTask(entry);
       persistNotes();
       renderSelectedDate();
       renderCalendar();
@@ -340,7 +357,13 @@ function addTask() {
   }
 
   const entry = getEntryForSelectedDate();
-  entry.tasks.push({ text, done: false });
+  if (entry.tasks.length >= 5) {
+    triggerCharacterReaction("체크리스트는 한 날짜에 최대 5개까지 추가할 수 있어요.");
+    return;
+  }
+
+  entry.tasks.push({ text, done: false, memo: "" });
+  selectedTaskIndex = entry.tasks.length - 1;
   taskInput.value = "";
   persistNotes();
   renderSelectedDate();
@@ -350,6 +373,7 @@ function addTask() {
 
 function selectDate(dateKey) {
   selectedDate = dateKey;
+  selectedTaskIndex = null;
   renderCalendar();
   renderSelectedDate();
 
@@ -359,7 +383,7 @@ function selectDate(dateKey) {
 
 function getEntryForSelectedDate() {
   if (!notesByDate[selectedDate]) {
-    notesByDate[selectedDate] = { memo: "", tasks: [] };
+    notesByDate[selectedDate] = { tasks: [] };
   }
 
   return notesByDate[selectedDate];
@@ -367,6 +391,34 @@ function getEntryForSelectedDate() {
 
 function persistNotes() {
   localStorage.setItem(storageKeys.notes, JSON.stringify(notesByDate));
+}
+
+function normalizeSelectedTask(entry) {
+  if (!entry.tasks?.length) {
+    selectedTaskIndex = null;
+    return;
+  }
+
+  if (selectedTaskIndex === null || !entry.tasks[selectedTaskIndex]) {
+    selectedTaskIndex = 0;
+  }
+}
+
+function syncTaskMemoEditor(entry) {
+  const activeTask = entry.tasks?.[selectedTaskIndex];
+
+  if (!activeTask) {
+    memoLabel.textContent = "체크리스트 메모";
+    memoInput.value = "";
+    memoInput.placeholder = "체크리스트를 선택한 뒤 메모를 적어주세요.";
+    memoInput.disabled = true;
+    return;
+  }
+
+  memoLabel.textContent = `${activeTask.text} + 메모`;
+  memoInput.value = activeTask.memo || "";
+  memoInput.placeholder = `${activeTask.text}에 대한 메모를 적어주세요.`;
+  memoInput.disabled = false;
 }
 
 function triggerCharacterReaction(line) {
