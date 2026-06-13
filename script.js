@@ -584,7 +584,7 @@ function closeTimePicker() {
 
 function parseTimeForPicker(timeValue) {
   if (!timeValue) {
-    return { period: "오전", hour: 12, minute: 0 };
+    return { period: "오전", hour: 1, minute: 1 };
   }
 
   const [hourText, minuteText] = String(timeValue).split(":");
@@ -592,7 +592,7 @@ function parseTimeForPicker(timeValue) {
   const minute = Number(minuteText);
 
   if (!Number.isInteger(hour24) || !Number.isInteger(minute)) {
-    return { period: "오전", hour: 12, minute: 0 };
+    return { period: "오전", hour: 1, minute: 1 };
   }
 
   return {
@@ -620,7 +620,7 @@ function renderTimePickerColumns() {
 
   renderTimePickerList(
     timePickerMinute,
-    Array.from({ length: 60 }, (_, index) => index),
+    Array.from({ length: 60 }, (_, index) => index + 1),
     timePickerValue.minute,
     (value) => {
       timePickerValue.minute = Number(value);
