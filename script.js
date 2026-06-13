@@ -613,7 +613,7 @@ function closeTimePicker() {
 
 function parseTimeForPicker(timeValue) {
   if (!timeValue) {
-    return { period: "오전", hour: 1, minute: 1 };
+    return { period: "오전", hour: 1, minute: 0 };
   }
 
   const [hourText, minuteText] = String(timeValue).split(":");
@@ -621,7 +621,7 @@ function parseTimeForPicker(timeValue) {
   const minute = Number(minuteText);
 
   if (!Number.isInteger(hour24) || !Number.isInteger(minute)) {
-    return { period: "오전", hour: 1, minute: 1 };
+    return { period: "오전", hour: 1, minute: 0 };
   }
 
   return {
