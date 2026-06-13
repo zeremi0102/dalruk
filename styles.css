@@ -729,7 +729,7 @@ textarea:disabled {
 }
 
 .day-task-chip {
-  border-radius: 0;
+  border-radius: 4px;
   --chip-fill: rgba(227, 155, 125, 0.22);
   background: var(--chip-fill);
   border: none;
