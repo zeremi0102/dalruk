@@ -730,7 +730,8 @@ textarea:disabled {
 .checklist-tool {
   height: calc(100% - 34px);
   margin-bottom: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  padding-bottom: 18px;
 }
 
 .checklist-tool .field-label {
