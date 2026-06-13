@@ -381,6 +381,17 @@ function renderTaskList(tasks) {
     });
   });
 
+  taskList.querySelectorAll(".task-item").forEach((item) => {
+    item.addEventListener("click", (event) => {
+      if (event.target.closest(".task-item-time-button, .task-remove, .task-select")) {
+        return;
+      }
+
+      selectedTaskIndex = Number(item.dataset.index);
+      renderSelectedDate();
+    });
+  });
+
   taskList.querySelectorAll(".task-item-time-button").forEach((button) => {
     button.addEventListener("click", () => {
       selectedTaskIndex = Number(button.dataset.index);
