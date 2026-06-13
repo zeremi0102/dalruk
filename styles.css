@@ -497,7 +497,7 @@ textarea:disabled {
 }
 
 .task-main {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -505,8 +505,8 @@ textarea:disabled {
 
 .task-item-time-button,
 .task-item-time-editor {
-  width: 214px;
-  flex: 0 0 214px;
+  width: 264px;
+  flex: 0 0 264px;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px;
@@ -559,6 +559,7 @@ textarea:disabled {
 }
 
 .task-remove {
+  flex: 0 0 auto;
   margin-left: auto;
   background: transparent;
   color: var(--accent-deep);
