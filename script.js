@@ -4,6 +4,7 @@ const agendaView = document.getElementById("agendaView");
 const selectedDateTitle = document.getElementById("selectedDateTitle");
 const memoLabel = document.getElementById("memoLabel");
 const memoInput = document.getElementById("memoInput");
+const taskTimeInput = document.getElementById("taskTimeInput");
 const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
 const addTaskButton = document.getElementById("addTaskButton");
@@ -315,7 +316,7 @@ function renderTaskList(tasks) {
 
   taskList.innerHTML = tasks.map((task, index) => `
     <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
-      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${task.text}</button>
+      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(getTaskDisplayText(task))}</button>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
   `).join("");
@@ -341,6 +342,7 @@ function renderTaskList(tasks) {
 
 function addTask() {
   const text = taskInput.value.trim();
+  const time = taskTimeInput.value;
   if (!text) {
     return;
   }
@@ -351,9 +353,10 @@ function addTask() {
     return;
   }
 
-  entry.tasks.push({ text, done: false, memo: "" });
+  entry.tasks.push({ text, time, done: false, memo: "" });
   selectedTaskIndex = entry.tasks.length - 1;
   taskInput.value = "";
+  taskTimeInput.value = "";
   persistNotes();
   renderSelectedDate();
   renderCalendar();
@@ -404,9 +407,9 @@ function syncTaskMemoEditor(entry) {
     return;
   }
 
-  memoLabel.textContent = `${activeTask.text} + 메모`;
+  memoLabel.textContent = `${getTaskDisplayText(activeTask)} + 메모`;
   memoInput.value = activeTask.memo || "";
-  memoInput.placeholder = `${activeTask.text}에 대한 메모를 적어주세요.`;
+  memoInput.placeholder = `${getTaskDisplayText(activeTask)}에 대한 메모를 적어주세요.`;
   memoInput.disabled = false;
 }
 
@@ -489,7 +492,7 @@ function buildDayPreview(entry) {
 
         return `
           <span class="day-task-chip day-task-chip--${colorName}${doneClass}">
-            <span class="day-task-text">${escapeHtml(task.text)}</span>
+            <span class="day-task-text">${escapeHtml(getTaskDisplayText(task))}</span>
           </span>
         `;
       })
@@ -501,6 +504,14 @@ function buildDayPreview(entry) {
   }
 
   return `<span class="day-preview-empty">메모 없음</span>`;
+}
+
+function getTaskDisplayText(task) {
+  if (!task) {
+    return "";
+  }
+
+  return task.time ? `${task.time} ${task.text}` : task.text;
 }
 
 function formatDateKey(date) {

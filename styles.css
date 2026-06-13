@@ -414,6 +414,11 @@ textarea {
   gap: 10px;
 }
 
+.task-time-input {
+  width: 118px;
+  flex: 0 0 118px;
+}
+
 .task-form input,
 textarea {
   width: 100%;
@@ -1007,6 +1012,11 @@ textarea:disabled {
 
   .task-form {
     gap: 8px;
+  }
+
+  .task-time-input {
+    width: 104px;
+    flex-basis: 104px;
   }
 
   .task-form input,
