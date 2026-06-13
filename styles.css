@@ -427,23 +427,12 @@ textarea {
   border-radius: 18px;
   padding: 10px 12px;
   background: #fffdfa;
+  cursor: pointer;
 }
 
-.task-time-part {
-  width: 64px;
-  border: 0;
-  background: transparent;
+.task-time-create-label {
   color: var(--ink);
-  text-align: center;
   font-size: 0.96rem;
-}
-
-.task-time-part:focus {
-  outline: none;
-}
-
-.task-time-separator {
-  color: var(--muted);
 }
 
 .task-form input,
@@ -503,8 +492,7 @@ textarea:disabled {
   align-items: center;
 }
 
-.task-item-time-button,
-.task-item-time-editor {
+.task-item-time-button {
   width: 100%;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -522,24 +510,73 @@ textarea:disabled {
   text-overflow: ellipsis;
 }
 
-.task-item-time-editor {
+.time-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 18, 16, 0.24);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  gap: 4px;
+  z-index: 40;
 }
 
-.task-item-time-part {
-  width: 44px;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
+.time-picker-overlay.hidden {
+  display: none;
+}
+
+.time-picker-sheet {
+  width: min(650px, 100%);
+  background: #fffdfa;
+  border-radius: 24px 24px 0 0;
+  padding: 18px 18px 22px;
+  box-shadow: 0 -10px 30px rgba(28, 27, 25, 0.08);
+}
+
+.time-picker-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.time-picker-column {
+  min-width: 0;
+}
+
+.time-picker-title {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
   text-align: center;
-  font-size: 0.92rem;
 }
 
-.task-item-time-part:focus {
-  outline: none;
+.time-picker-list {
+  max-height: 220px;
+  overflow-y: auto;
+  display: grid;
+  gap: 8px;
+  padding-right: 2px;
+}
+
+.time-picker-option {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fffdfa;
+  color: var(--ink);
+  padding: 10px 12px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.time-picker-option.is-selected {
+  border-color: rgba(220, 127, 95, 0.45);
+  background: rgba(255, 233, 224, 0.7);
+}
+
+.time-picker-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .task-select {

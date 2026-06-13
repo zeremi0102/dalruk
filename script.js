@@ -4,8 +4,8 @@ const agendaView = document.getElementById("agendaView");
 const selectedDateTitle = document.getElementById("selectedDateTitle");
 const memoLabel = document.getElementById("memoLabel");
 const memoInput = document.getElementById("memoInput");
-const taskHourInput = document.getElementById("taskHourInput");
-const taskMinuteInput = document.getElementById("taskMinuteInput");
+const taskTimePickerButton = document.getElementById("taskTimePickerButton");
+const taskTimePickerLabel = document.getElementById("taskTimePickerLabel");
 const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
 const addTaskButton = document.getElementById("addTaskButton");
@@ -20,6 +20,12 @@ const topBarDate = document.getElementById("topBarDate");
 const homeButton = document.getElementById("homeButton");
 const characterTitle = document.querySelector(".character-stage h1");
 const taskPreviewColors = ["peach", "mint", "sky", "lavender", "sand"];
+const timePickerOverlay = document.getElementById("timePickerOverlay");
+const timePickerPeriod = document.getElementById("timePickerPeriod");
+const timePickerHour = document.getElementById("timePickerHour");
+const timePickerMinute = document.getElementById("timePickerMinute");
+const timePickerCancel = document.getElementById("timePickerCancel");
+const timePickerSave = document.getElementById("timePickerSave");
 
 const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
 const storageKeys = {
@@ -34,12 +40,15 @@ let selectedDate = formatDateKey(new Date());
 let isAgendaMode = false;
 let notesByDate = loadJson(storageKeys.notes, {});
 let selectedTaskIndex = null;
-let editingTaskTimeIndex = null;
+let draftAddTime = "";
+let timePickerTarget = { type: "add", index: null };
+let timePickerValue = { period: "오전", hour: 12, minute: 0 };
 
 sortAllTaskEntries();
 
 restoreState();
 bindEvents();
+syncAddTimeDisplay();
 initializeSpeechLog();
 renderCalendar();
 renderSelectedDate();
@@ -81,11 +90,16 @@ function bindEvents() {
 
   addTaskButton.addEventListener("click", addTask);
 
-  [taskHourInput, taskMinuteInput].forEach((input) => {
-    input.addEventListener("input", () => {
-      const digitsOnly = input.value.replace(/\D/g, "").slice(0, 2);
-      input.value = digitsOnly;
-    });
+  taskTimePickerButton.addEventListener("click", () => {
+    openTimePicker("add");
+  });
+
+  timePickerCancel.addEventListener("click", closeTimePicker);
+  timePickerSave.addEventListener("click", applyTimePickerValue);
+  timePickerOverlay.addEventListener("click", (event) => {
+    if (event.target === timePickerOverlay) {
+      closeTimePicker();
+    }
   });
 
   taskInput.addEventListener("keydown", (event) => {
@@ -339,16 +353,7 @@ function renderTaskList(tasks) {
 
   taskList.innerHTML = tasks.map((task, index) => `
     <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
-      ${index === editingTaskTimeIndex
-        ? `
-          <div class="task-item-time-editor" data-index="${index}">
-            <input type="number" class="task-item-time-part task-item-time-hour" data-index="${index}" min="0" max="23" inputmode="numeric" value="${getTimePart(task.time, "hour")}">
-            <span class="task-time-separator">:</span>
-            <input type="number" class="task-item-time-part task-item-time-minute" data-index="${index}" min="0" max="59" inputmode="numeric" value="${getTimePart(task.time, "minute")}">
-          </div>
-        `
-        : `<button type="button" class="task-item-time-button" data-index="${index}">${escapeHtml(formatTimeForButton(task.time))}</button>`
-      }
+      <button type="button" class="task-item-time-button" data-index="${index}">${escapeHtml(formatTimeForButton(task.time))}</button>
       <div class="task-main">
         <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(task.text)}</button>
       </div>
@@ -367,41 +372,7 @@ function renderTaskList(tasks) {
     button.addEventListener("click", () => {
       selectedTaskIndex = Number(button.dataset.index);
       renderSelectedDate();
-    });
-
-    button.addEventListener("dblclick", () => {
-      selectedTaskIndex = Number(button.dataset.index);
-      editingTaskTimeIndex = Number(button.dataset.index);
-      renderSelectedDate();
-      focusTaskTimeEditor(editingTaskTimeIndex);
-    });
-  });
-
-  taskList.querySelectorAll(".task-item-time-editor").forEach((editor) => {
-    const index = Number(editor.dataset.index);
-    const hourInput = editor.querySelector(".task-item-time-hour");
-    const minuteInput = editor.querySelector(".task-item-time-minute");
-
-    editor.addEventListener("focusout", (event) => {
-      if (editor.contains(event.relatedTarget)) {
-        return;
-      }
-
-      commitTaskTimeEdit(index, hourInput.value, minuteInput.value);
-    });
-
-    [hourInput, minuteInput].forEach((input) => {
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          commitTaskTimeEdit(index, hourInput.value, minuteInput.value);
-        }
-
-        if (event.key === "Escape") {
-          event.preventDefault();
-          cancelTaskTimeEdit();
-        }
-      });
+      openTimePicker("task", Number(button.dataset.index));
     });
   });
 
@@ -419,14 +390,8 @@ function renderTaskList(tasks) {
 
 function addTask() {
   const text = taskInput.value.trim();
-  const time = buildTimeValue(taskHourInput.value, taskMinuteInput.value);
+  const time = draftAddTime;
   if (!text) {
-    return;
-  }
-
-  if (time === null) {
-    taskHourInput.value = "";
-    taskMinuteInput.value = "";
     return;
   }
 
@@ -440,9 +405,8 @@ function addTask() {
   entry.tasks.push(newTask);
   selectedTaskIndex = sortTasksByTime(entry.tasks, newTask);
   taskInput.value = "";
-  taskHourInput.value = "";
-  taskMinuteInput.value = "";
-  editingTaskTimeIndex = null;
+  draftAddTime = "";
+  syncAddTimeDisplay();
   persistNotes();
   renderSelectedDate();
   renderCalendar();
@@ -452,7 +416,6 @@ function addTask() {
 function selectDate(dateKey) {
   selectedDate = dateKey;
   selectedTaskIndex = null;
-  editingTaskTimeIndex = null;
   renderCalendar();
   renderSelectedDate();
 
@@ -601,6 +564,118 @@ function getTaskDisplayText(task) {
   return task.time ? `${formatTimeForButton(task.time)} ${task.text}` : task.text;
 }
 
+function syncAddTimeDisplay() {
+  taskTimePickerLabel.textContent = formatTimeForButton(draftAddTime);
+}
+
+function openTimePicker(type, index = null) {
+  timePickerTarget = { type, index };
+  const currentTime = type === "add"
+    ? draftAddTime
+    : getEntryForSelectedDate().tasks?.[index]?.time || "";
+  timePickerValue = parseTimeForPicker(currentTime);
+  renderTimePickerColumns();
+  timePickerOverlay.classList.remove("hidden");
+}
+
+function closeTimePicker() {
+  timePickerOverlay.classList.add("hidden");
+}
+
+function parseTimeForPicker(timeValue) {
+  if (!timeValue) {
+    return { period: "오전", hour: 12, minute: 0 };
+  }
+
+  const [hourText, minuteText] = String(timeValue).split(":");
+  const hour24 = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isInteger(hour24) || !Number.isInteger(minute)) {
+    return { period: "오전", hour: 12, minute: 0 };
+  }
+
+  return {
+    period: hour24 >= 12 ? "오후" : "오전",
+    hour: hour24 % 12 || 12,
+    minute
+  };
+}
+
+function renderTimePickerColumns() {
+  renderTimePickerList(timePickerPeriod, ["오전", "오후"], timePickerValue.period, (value) => {
+    timePickerValue.period = value;
+    renderTimePickerColumns();
+  });
+
+  renderTimePickerList(
+    timePickerHour,
+    Array.from({ length: 12 }, (_, index) => index + 1),
+    timePickerValue.hour,
+    (value) => {
+      timePickerValue.hour = Number(value);
+      renderTimePickerColumns();
+    }
+  );
+
+  renderTimePickerList(
+    timePickerMinute,
+    Array.from({ length: 60 }, (_, index) => index),
+    timePickerValue.minute,
+    (value) => {
+      timePickerValue.minute = Number(value);
+      renderTimePickerColumns();
+    },
+    (value) => String(value).padStart(2, "0")
+  );
+}
+
+function renderTimePickerList(container, values, selectedValue, onSelect, formatter = (value) => String(value)) {
+  container.innerHTML = values.map((value) => `
+    <button type="button" class="time-picker-option ${value === selectedValue ? "is-selected" : ""}" data-value="${value}">
+      ${formatter(value)}
+    </button>
+  `).join("");
+
+  container.querySelectorAll(".time-picker-option").forEach((button) => {
+    button.addEventListener("click", () => {
+      const rawValue = button.dataset.value;
+      onSelect(typeof selectedValue === "number" ? Number(rawValue) : rawValue);
+    });
+  });
+}
+
+function applyTimePickerValue() {
+  const hour24 = convertPickerHourTo24(timePickerValue.period, timePickerValue.hour);
+  const nextTime = `${String(hour24).padStart(2, "0")}:${String(timePickerValue.minute).padStart(2, "0")}`;
+
+  if (timePickerTarget.type === "add") {
+    draftAddTime = nextTime;
+    syncAddTimeDisplay();
+    closeTimePicker();
+    return;
+  }
+
+  const entry = getEntryForSelectedDate();
+  const task = entry.tasks?.[timePickerTarget.index];
+  if (!task) {
+    closeTimePicker();
+    return;
+  }
+
+  task.time = nextTime;
+  selectedTaskIndex = sortTasksByTime(entry.tasks, task);
+  persistNotes();
+  renderCalendar();
+  renderSelectedDate();
+  closeTimePicker();
+}
+
+function convertPickerHourTo24(period, hour12) {
+  const normalizedHour = Number(hour12) % 12;
+  return period === "오후" ? normalizedHour + 12 : normalizedHour;
+}
+
 function formatTimeForButton(timeValue) {
   if (!timeValue) {
     return "시간";
@@ -619,15 +694,6 @@ function formatTimeForButton(timeValue) {
   return `${period} ${displayHour}시 ${minute}분`;
 }
 
-function getTimePart(timeValue, part) {
-  if (!timeValue) {
-    return "";
-  }
-
-  const [hour, minute] = timeValue.split(":");
-  return part === "hour" ? String(Number(hour)) : String(Number(minute));
-}
-
 function formatTimeForButton(timeValue) {
   if (!timeValue) {
     return "시간";
@@ -644,72 +710,6 @@ function formatTimeForButton(timeValue) {
   const period = hour >= 12 ? "오후" : "오전";
   const displayHour = String(hour % 12 || 12).padStart(2, "0");
   return `${period} ${displayHour} : ${String(minute).padStart(2, "0")}`;
-}
-
-function buildTimeValue(hourValue, minuteValue) {
-  const hourText = String(hourValue).trim();
-  const minuteText = String(minuteValue).trim();
-
-  if (!hourText && !minuteText) {
-    return "";
-  }
-
-  const hour = Number(hourText);
-  const minute = Number(minuteText);
-
-  if (
-    !Number.isInteger(hour) ||
-    !Number.isInteger(minute) ||
-    hour < 0 ||
-    hour > 23 ||
-    minute < 0 ||
-    minute > 59
-  ) {
-    return null;
-  }
-
-  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-}
-
-function commitTaskTimeEdit(index, hourValue, minuteValue) {
-  const entry = getEntryForSelectedDate();
-  const task = entry.tasks?.[index];
-
-  if (!task) {
-    cancelTaskTimeEdit();
-    return;
-  }
-
-  const nextTime = buildTimeValue(hourValue, minuteValue);
-  editingTaskTimeIndex = null;
-
-  if (nextTime !== null) {
-    task.time = nextTime;
-    selectedTaskIndex = sortTasksByTime(entry.tasks, task);
-    persistNotes();
-    renderCalendar();
-  } else {
-    selectedTaskIndex = index;
-  }
-
-  renderSelectedDate();
-}
-
-function cancelTaskTimeEdit() {
-  editingTaskTimeIndex = null;
-  renderSelectedDate();
-}
-
-function focusTaskTimeEditor(index) {
-  requestAnimationFrame(() => {
-    const hourInput = taskList.querySelector(`.task-item-time-hour[data-index="${index}"]`);
-    if (!hourInput) {
-      return;
-    }
-
-    hourInput.focus();
-    hourInput.select();
-  });
 }
 
 function formatDateKey(date) {

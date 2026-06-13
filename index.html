@@ -73,11 +73,9 @@
             </div>
             <label class="field-label" for="taskInput">체크리스트 추가</label>
             <div class="task-form">
-              <div class="task-time-create">
-                <input id="taskHourInput" class="task-time-part" type="number" inputmode="numeric" min="0" max="23" placeholder="시" aria-label="시간">
-                <span class="task-time-separator">:</span>
-                <input id="taskMinuteInput" class="task-time-part" type="number" inputmode="numeric" min="0" max="59" placeholder="분" aria-label="분">
-              </div>
+              <button id="taskTimePickerButton" class="task-time-create" type="button" aria-label="시간 선택">
+                <span id="taskTimePickerLabel" class="task-time-create-label">시간 선택</span>
+              </button>
               <input id="taskInput" type="text" placeholder="예: 운동 30분 하기">
               <button id="addTaskButton" class="primary-button">추가</button>
             </div>
@@ -114,6 +112,29 @@
             <div class="bottom-bar-slot" data-slot="5"></div>
           </div>
         </footer>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-picker-overlay hidden" id="timePickerOverlay">
+    <div class="time-picker-sheet" role="dialog" aria-modal="true" aria-label="시간 선택">
+      <div class="time-picker-columns">
+        <div class="time-picker-column">
+          <p class="time-picker-title">구분</p>
+          <div class="time-picker-list" id="timePickerPeriod"></div>
+        </div>
+        <div class="time-picker-column">
+          <p class="time-picker-title">시</p>
+          <div class="time-picker-list" id="timePickerHour"></div>
+        </div>
+        <div class="time-picker-column">
+          <p class="time-picker-title">분</p>
+          <div class="time-picker-list" id="timePickerMinute"></div>
+        </div>
+      </div>
+      <div class="time-picker-actions">
+        <button id="timePickerCancel" class="action-button" type="button">취소</button>
+        <button id="timePickerSave" class="primary-button" type="button">확인</button>
       </div>
     </div>
   </div>
