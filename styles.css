@@ -464,11 +464,6 @@ textarea:disabled {
   background: rgba(255, 233, 224, 0.65);
 }
 
-.task-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-}
-
 .task-select {
   flex: 1;
   min-width: 0;

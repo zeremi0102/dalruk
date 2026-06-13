@@ -315,7 +315,6 @@ function renderTaskList(tasks) {
 
   taskList.innerHTML = tasks.map((task, index) => `
     <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
-      <input type="checkbox" data-index="${index}" ${task.done ? "checked" : ""}>
       <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${task.text}</button>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
@@ -325,16 +324,6 @@ function renderTaskList(tasks) {
     button.addEventListener("click", () => {
       selectedTaskIndex = Number(button.dataset.index);
       renderSelectedDate();
-    });
-  });
-
-  taskList.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-    checkbox.addEventListener("change", () => {
-      const entry = getEntryForSelectedDate();
-      entry.tasks[Number(checkbox.dataset.index)].done = checkbox.checked;
-      persistNotes();
-      renderSelectedDate();
-      renderCalendar();
     });
   });
 
