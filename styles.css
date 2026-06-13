@@ -417,8 +417,8 @@ textarea {
 }
 
 .task-time-create {
-  width: 124px;
-  flex: 0 0 124px;
+  width: 168px;
+  flex: 0 0 168px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -430,7 +430,7 @@ textarea {
 }
 
 .task-time-part {
-  width: 36px;
+  width: 52px;
   border: 0;
   background: transparent;
   color: var(--ink);
