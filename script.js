@@ -408,6 +408,11 @@ function addTask() {
     return;
   }
 
+  if (!time) {
+    triggerCharacterReaction("시간을 설정해야 체크리스트를 추가할 수 있어요.");
+    return;
+  }
+
   const entry = getEntryForSelectedDate();
   if (entry.tasks.length >= 5) {
     triggerCharacterReaction("체크리스트는 한 날짜에 최대 5개까지 추가할 수 있어요.");
