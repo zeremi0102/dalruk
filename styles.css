@@ -575,6 +575,11 @@ textarea:disabled {
   background: rgba(255, 233, 224, 0.95);
 }
 
+.calendar-day.today .day-number {
+  color: #d66f4b;
+  font-weight: 800;
+}
+
 .day-number {
   font-weight: 700;
   font-size: 0.82rem;

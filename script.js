@@ -232,6 +232,7 @@ function renderCalendar() {
   const totalVisibleCells = getCalendarCellCount(startOffset, totalDaysInMonth);
   const weekdayHtml = `<div class="weekdays">${weekdays.map((day) => `<div class="weekday">${day}</div>`).join("")}</div>`;
   const daysHtml = [];
+  const todayKey = formatDateKey(new Date());
 
   monthLabel.textContent = `${year}년 ${month + 1}월`;
 
@@ -242,9 +243,10 @@ function renderCalendar() {
     const entry = notesByDate[dateKey];
     const isCurrentMonth = date.getMonth() === month;
     const preview = buildDayPreview(entry, dateKey);
+    const isToday = dateKey === todayKey;
 
     daysHtml.push(`
-      <button class="calendar-day ${isCurrentMonth ? "" : "other-month"} ${dateKey === selectedDate ? "selected" : ""}" data-date="${dateKey}">
+      <button class="calendar-day ${isCurrentMonth ? "" : "other-month"} ${dateKey === selectedDate ? "selected" : ""} ${isToday ? "today" : ""}" data-date="${dateKey}">
         <div class="day-number">${date.getDate()}</div>
         <div class="day-preview">${preview}</div>
       </button>
