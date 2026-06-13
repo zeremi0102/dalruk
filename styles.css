@@ -739,32 +739,32 @@ textarea:disabled {
 
 .day-task-chip--peach {
   background: rgba(227, 155, 125, 0.22);
-  border-color: rgba(227, 155, 125, 0.38);
+  border-color: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-chip--mint {
   background: rgba(143, 184, 163, 0.22);
-  border-color: rgba(143, 184, 163, 0.38);
+  border-color: rgba(143, 184, 163, 0.22);
 }
 
 .day-task-chip--sky {
   background: rgba(138, 169, 214, 0.22);
-  border-color: rgba(138, 169, 214, 0.38);
+  border-color: rgba(138, 169, 214, 0.22);
 }
 
 .day-task-chip--lavender {
   background: rgba(179, 154, 217, 0.22);
-  border-color: rgba(179, 154, 217, 0.38);
+  border-color: rgba(179, 154, 217, 0.22);
 }
 
 .day-task-chip--sand {
   background: rgba(201, 171, 122, 0.22);
-  border-color: rgba(201, 171, 122, 0.38);
+  border-color: rgba(201, 171, 122, 0.22);
 }
 
 .day-task-text,
 .day-preview-empty {
-  color: var(--muted);
+  color: #1c1b19;
 }
 
 .day-task-text {
