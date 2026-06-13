@@ -462,7 +462,7 @@ textarea:disabled {
 .task-list {
   list-style: none;
   padding: 0;
-  margin: 14px 0 0;
+  margin: 14px 0 22px;
   display: grid;
   gap: 10px;
   max-height: 166px;
@@ -856,11 +856,12 @@ textarea:disabled {
 }
 
 #memoLabel {
-  margin-top: 18px;
+  margin-top: 0;
+  margin-bottom: 6px;
 }
 
 .checklist-tool textarea {
-  margin-top: 10px;
+  margin-top: 0;
   height: 120px;
 }
 
