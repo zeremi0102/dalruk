@@ -340,7 +340,9 @@ function renderTaskList(tasks) {
         `
         : `<button type="button" class="task-item-time-button" data-index="${index}">${escapeHtml(formatTimeForButton(task.time))}</button>`
       }
-      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(task.text)}</button>
+      <div class="task-main">
+        <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(task.text)}</button>
+      </div>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
   `).join("");

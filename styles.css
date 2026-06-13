@@ -494,6 +494,13 @@ textarea:disabled {
   background: rgba(255, 233, 224, 0.65);
 }
 
+.task-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
 .task-item-time-button,
 .task-item-time-editor {
   width: 136px;
@@ -531,7 +538,7 @@ textarea:disabled {
 }
 
 .task-select {
-  flex: 1;
+  width: 100%;
   min-width: 0;
   padding: 0;
   border: 0;
