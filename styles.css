@@ -745,19 +745,19 @@ textarea:disabled {
 }
 
 .day-task-chip--mint {
-  --chip-fill: rgba(143, 184, 163, 0.22);
+  --chip-fill: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-chip--sky {
-  --chip-fill: rgba(138, 169, 214, 0.22);
+  --chip-fill: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-chip--lavender {
-  --chip-fill: rgba(179, 154, 217, 0.22);
+  --chip-fill: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-chip--sand {
-  --chip-fill: rgba(201, 171, 122, 0.22);
+  --chip-fill: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-text,
