@@ -560,7 +560,7 @@ function buildDayPreview(entry, dateKey) {
 
         return `
           <span class="day-task-chip day-task-chip--${colorName}${doneClass}" data-date="${dateKey}" data-task-index="${index}">
-            <span class="day-task-text">${escapeHtml(getTaskDisplayText(task))}</span>
+            <span class="day-task-text">${escapeHtml(task.text)}</span>
           </span>
         `;
       })
