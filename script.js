@@ -638,7 +638,7 @@ function renderTimePickerColumns() {
 
   renderTimePickerList(
     timePickerMinute,
-    Array.from({ length: 60 }, (_, index) => index + 1),
+    Array.from({ length: 60 }, (_, index) => index),
     timePickerValue.minute,
     (value) => {
       timePickerValue.minute = Number(value);
