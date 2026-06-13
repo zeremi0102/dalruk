@@ -241,7 +241,7 @@ function renderCalendar() {
     const dateKey = formatDateKey(date);
     const entry = notesByDate[dateKey];
     const isCurrentMonth = date.getMonth() === month;
-    const preview = buildDayPreview(entry);
+    const preview = buildDayPreview(entry, dateKey);
 
     daysHtml.push(`
       <button class="calendar-day ${isCurrentMonth ? "" : "other-month"} ${dateKey === selectedDate ? "selected" : ""}" data-date="${dateKey}">
@@ -255,6 +255,16 @@ function renderCalendar() {
 
   monthView.querySelectorAll(".calendar-day").forEach((button) => {
     button.addEventListener("click", () => selectDate(button.dataset.date));
+  });
+
+  monthView.querySelectorAll(".day-task-chip").forEach((chip) => {
+    chip.addEventListener("click", (event) => {
+      event.stopPropagation();
+      selectedDate = chip.dataset.date;
+      selectedTaskIndex = Number(chip.dataset.taskIndex);
+      renderCalendar();
+      renderSelectedDate();
+    });
   });
 
   renderAgendaView(year, month);
@@ -479,7 +489,7 @@ function buildPreview(entry, includeFallback = false) {
   return includeFallback ? "등록된 메모나 체크리스트가 없어요" : "메모 없음";
 }
 
-function buildDayPreview(entry) {
+function buildDayPreview(entry, dateKey) {
   if (!entry) {
     return `<span class="day-preview-empty">메모 없음</span>`;
   }
@@ -491,7 +501,7 @@ function buildDayPreview(entry) {
         const doneClass = task.done ? " is-done" : "";
 
         return `
-          <span class="day-task-chip day-task-chip--${colorName}${doneClass}">
+          <span class="day-task-chip day-task-chip--${colorName}${doneClass}" data-date="${dateKey}" data-task-index="${index}">
             <span class="day-task-text">${escapeHtml(getTaskDisplayText(task))}</span>
           </span>
         `;
