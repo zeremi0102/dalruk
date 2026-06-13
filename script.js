@@ -41,6 +41,7 @@ let isAgendaMode = false;
 let notesByDate = loadJson(storageKeys.notes, {});
 let selectedTaskIndex = null;
 let draftAddTime = "";
+let dayPreviewScrollTopByDate = {};
 let timePickerTarget = { type: "add", index: null };
 let timePickerValue = { period: "오전", hour: 12, minute: 0 };
 
@@ -281,12 +282,24 @@ function renderCalendar() {
   monthView.innerHTML = `${weekdayHtml}<div class="calendar-grid">${daysHtml.join("")}</div>`;
 
   monthView.querySelectorAll(".calendar-day").forEach((button) => {
+    const preview = button.querySelector(".day-preview");
+    const savedScrollTop = dayPreviewScrollTopByDate[button.dataset.date];
+    if (preview && typeof savedScrollTop === "number") {
+      preview.scrollTop = savedScrollTop;
+    }
+  });
+
+  monthView.querySelectorAll(".calendar-day").forEach((button) => {
     button.addEventListener("click", () => selectDate(button.dataset.date));
   });
 
   monthView.querySelectorAll(".day-task-chip").forEach((chip) => {
     chip.addEventListener("click", (event) => {
       event.stopPropagation();
+      const preview = chip.closest(".day-preview");
+      if (preview) {
+        dayPreviewScrollTopByDate[chip.dataset.date] = preview.scrollTop;
+      }
       selectedDate = chip.dataset.date;
       selectedTaskIndex = Number(chip.dataset.taskIndex);
       renderCalendar();
