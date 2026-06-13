@@ -621,6 +621,24 @@ function getTimePart(timeValue, part) {
   return part === "hour" ? String(Number(hour)) : String(Number(minute));
 }
 
+function formatTimeForButton(timeValue) {
+  if (!timeValue) {
+    return "시간";
+  }
+
+  const [hourText, minuteText] = String(timeValue).split(":");
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isInteger(hour) || !Number.isInteger(minute)) {
+    return "시간";
+  }
+
+  const period = hour >= 12 ? "오후" : "오전";
+  const displayHour = hour % 12 || 12;
+  return `${period} ${displayHour}:${String(minute).padStart(2, "0")}`;
+}
+
 function buildTimeValue(hourValue, minuteValue) {
   const hourText = String(hourValue).trim();
   const minuteText = String(minuteValue).trim();

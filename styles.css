@@ -482,7 +482,7 @@ textarea:disabled {
 
 .task-item {
   display: grid;
-  grid-template-columns: 264px minmax(0, 1fr) auto;
+  grid-template-columns: 300px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
@@ -517,8 +517,9 @@ textarea:disabled {
   text-align: left;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 0.8rem;
-  overflow: visible;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task-item-time-editor {
