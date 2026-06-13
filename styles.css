@@ -577,45 +577,42 @@ textarea {
   border-radius: 999px;
   display: flex;
   align-items: center;
-  gap: 4px;
   padding: 2px 6px;
   font-size: 0.56rem;
   line-height: 1.25;
 }
 
 .day-task-chip {
-  background: rgba(244, 239, 232, 0.92);
+  border: 1px solid transparent;
 }
 
 .day-task-chip.is-done {
   opacity: 0.6;
 }
 
-.day-task-label {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  flex: 0 0 8px;
+.day-task-chip--peach {
+  background: rgba(227, 155, 125, 0.22);
+  border-color: rgba(227, 155, 125, 0.38);
 }
 
-.day-task-label--peach {
-  background: #e39b7d;
+.day-task-chip--mint {
+  background: rgba(143, 184, 163, 0.22);
+  border-color: rgba(143, 184, 163, 0.38);
 }
 
-.day-task-label--mint {
-  background: #8fb8a3;
+.day-task-chip--sky {
+  background: rgba(138, 169, 214, 0.22);
+  border-color: rgba(138, 169, 214, 0.38);
 }
 
-.day-task-label--sky {
-  background: #8aa9d6;
+.day-task-chip--lavender {
+  background: rgba(179, 154, 217, 0.22);
+  border-color: rgba(179, 154, 217, 0.38);
 }
 
-.day-task-label--lavender {
-  background: #b39ad9;
-}
-
-.day-task-label--sand {
-  background: #c9ab7a;
+.day-task-chip--sand {
+  background: rgba(201, 171, 122, 0.22);
+  border-color: rgba(201, 171, 122, 0.38);
 }
 
 .day-task-text,
@@ -629,7 +626,7 @@ textarea {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: left;
+  text-align: center;
 }
 
 .day-preview-empty {

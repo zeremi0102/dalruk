@@ -448,8 +448,7 @@ function buildDayPreview(entry) {
         const doneClass = task.done ? " is-done" : "";
 
         return `
-          <span class="day-task-chip${doneClass}">
-            <span class="day-task-label day-task-label--${colorName}"></span>
+          <span class="day-task-chip day-task-chip--${colorName}${doneClass}">
             <span class="day-task-text">${escapeHtml(task.text)}</span>
           </span>
         `;
