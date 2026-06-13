@@ -635,8 +635,8 @@ function formatTimeForButton(timeValue) {
   }
 
   const period = hour >= 12 ? "오후" : "오전";
-  const displayHour = hour % 12 || 12;
-  return `${period} ${displayHour}:${String(minute).padStart(2, "0")}`;
+  const displayHour = String(hour % 12 || 12).padStart(2, "0");
+  return `${period} ${displayHour} : ${String(minute).padStart(2, "0")}`;
 }
 
 function buildTimeValue(hourValue, minuteValue) {
