@@ -730,7 +730,10 @@ textarea:disabled {
 }
 
 .day-task-chip {
-  border: 1px solid transparent;
+  --chip-fill: rgba(227, 155, 125, 0.22);
+  background: var(--chip-fill);
+  border: 1px solid var(--chip-fill);
+  box-shadow: none;
 }
 
 .day-task-chip.is-done {
@@ -738,28 +741,23 @@ textarea:disabled {
 }
 
 .day-task-chip--peach {
-  background: rgba(227, 155, 125, 0.22);
-  border-color: rgba(227, 155, 125, 0.22);
+  --chip-fill: rgba(227, 155, 125, 0.22);
 }
 
 .day-task-chip--mint {
-  background: rgba(143, 184, 163, 0.22);
-  border-color: rgba(143, 184, 163, 0.22);
+  --chip-fill: rgba(143, 184, 163, 0.22);
 }
 
 .day-task-chip--sky {
-  background: rgba(138, 169, 214, 0.22);
-  border-color: rgba(138, 169, 214, 0.22);
+  --chip-fill: rgba(138, 169, 214, 0.22);
 }
 
 .day-task-chip--lavender {
-  background: rgba(179, 154, 217, 0.22);
-  border-color: rgba(179, 154, 217, 0.22);
+  --chip-fill: rgba(179, 154, 217, 0.22);
 }
 
 .day-task-chip--sand {
-  background: rgba(201, 171, 122, 0.22);
-  border-color: rgba(201, 171, 122, 0.22);
+  --chip-fill: rgba(201, 171, 122, 0.22);
 }
 
 .day-task-text,
