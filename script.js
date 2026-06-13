@@ -328,6 +328,7 @@ function renderTaskList(tasks) {
 
   taskList.innerHTML = tasks.map((task, index) => `
     <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
+      <input type="time" class="task-item-time" data-index="${index}" value="${task.time || ""}" aria-label="체크리스트 시간">
       <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(getTaskDisplayText(task))}</button>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
@@ -337,6 +338,27 @@ function renderTaskList(tasks) {
     button.addEventListener("click", () => {
       selectedTaskIndex = Number(button.dataset.index);
       renderSelectedDate();
+    });
+  });
+
+  taskList.querySelectorAll(".task-item-time").forEach((input) => {
+    input.addEventListener("click", () => {
+      selectedTaskIndex = Number(input.dataset.index);
+    });
+
+    input.addEventListener("change", () => {
+      const entry = getEntryForSelectedDate();
+      const task = entry.tasks[Number(input.dataset.index)];
+
+      if (!task) {
+        return;
+      }
+
+      task.time = input.value;
+      selectedTaskIndex = Number(input.dataset.index);
+      persistNotes();
+      renderSelectedDate();
+      renderCalendar();
     });
   });
 
