@@ -73,7 +73,11 @@
             </div>
             <label class="field-label" for="taskInput">체크리스트 추가</label>
             <div class="task-form">
-              <input id="taskTimeInput" class="task-time-input" type="time" aria-label="체크리스트 시간">
+              <div class="task-time-create">
+                <input id="taskHourInput" class="task-time-part" type="number" inputmode="numeric" min="0" max="23" placeholder="시" aria-label="시간">
+                <span class="task-time-separator">:</span>
+                <input id="taskMinuteInput" class="task-time-part" type="number" inputmode="numeric" min="0" max="59" placeholder="분" aria-label="분">
+              </div>
               <input id="taskInput" type="text" placeholder="예: 운동 30분 하기">
               <button id="addTaskButton" class="primary-button">추가</button>
             </div>

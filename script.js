@@ -4,7 +4,8 @@ const agendaView = document.getElementById("agendaView");
 const selectedDateTitle = document.getElementById("selectedDateTitle");
 const memoLabel = document.getElementById("memoLabel");
 const memoInput = document.getElementById("memoInput");
-const taskTimeInput = document.getElementById("taskTimeInput");
+const taskHourInput = document.getElementById("taskHourInput");
+const taskMinuteInput = document.getElementById("taskMinuteInput");
 const taskInput = document.getElementById("taskInput");
 const taskList = document.getElementById("taskList");
 const addTaskButton = document.getElementById("addTaskButton");
@@ -33,6 +34,7 @@ let selectedDate = formatDateKey(new Date());
 let isAgendaMode = false;
 let notesByDate = loadJson(storageKeys.notes, {});
 let selectedTaskIndex = null;
+let editingTaskTimeIndex = null;
 
 restoreState();
 bindEvents();
@@ -328,8 +330,17 @@ function renderTaskList(tasks) {
 
   taskList.innerHTML = tasks.map((task, index) => `
     <li class="task-item ${index === selectedTaskIndex ? "is-selected" : ""}" data-index="${index}">
-      <input type="time" class="task-item-time" data-index="${index}" value="${task.time || ""}" aria-label="체크리스트 시간">
-      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(getTaskDisplayText(task))}</button>
+      ${index === editingTaskTimeIndex
+        ? `
+          <div class="task-item-time-editor" data-index="${index}">
+            <input type="number" class="task-item-time-part task-item-time-hour" data-index="${index}" min="0" max="23" inputmode="numeric" value="${getTimePart(task.time, "hour")}">
+            <span class="task-time-separator">:</span>
+            <input type="number" class="task-item-time-part task-item-time-minute" data-index="${index}" min="0" max="59" inputmode="numeric" value="${getTimePart(task.time, "minute")}">
+          </div>
+        `
+        : `<button type="button" class="task-item-time-button" data-index="${index}">${escapeHtml(formatTimeForButton(task.time))}</button>`
+      }
+      <button type="button" class="task-select ${task.done ? "done" : ""}" data-index="${index}">${escapeHtml(task.text)}</button>
       <button type="button" class="task-remove" data-index="${index}">삭제</button>
     </li>
   `).join("");
@@ -341,24 +352,45 @@ function renderTaskList(tasks) {
     });
   });
 
-  taskList.querySelectorAll(".task-item-time").forEach((input) => {
-    input.addEventListener("click", () => {
-      selectedTaskIndex = Number(input.dataset.index);
+  taskList.querySelectorAll(".task-item-time-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedTaskIndex = Number(button.dataset.index);
+      renderSelectedDate();
     });
 
-    input.addEventListener("change", () => {
-      const entry = getEntryForSelectedDate();
-      const task = entry.tasks[Number(input.dataset.index)];
+    button.addEventListener("dblclick", () => {
+      selectedTaskIndex = Number(button.dataset.index);
+      editingTaskTimeIndex = Number(button.dataset.index);
+      renderSelectedDate();
+      focusTaskTimeEditor(editingTaskTimeIndex);
+    });
+  });
 
-      if (!task) {
+  taskList.querySelectorAll(".task-item-time-editor").forEach((editor) => {
+    const index = Number(editor.dataset.index);
+    const hourInput = editor.querySelector(".task-item-time-hour");
+    const minuteInput = editor.querySelector(".task-item-time-minute");
+
+    editor.addEventListener("focusout", (event) => {
+      if (editor.contains(event.relatedTarget)) {
         return;
       }
 
-      task.time = input.value;
-      selectedTaskIndex = Number(input.dataset.index);
-      persistNotes();
-      renderSelectedDate();
-      renderCalendar();
+      commitTaskTimeEdit(index, hourInput.value, minuteInput.value);
+    });
+
+    [hourInput, minuteInput].forEach((input) => {
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          commitTaskTimeEdit(index, hourInput.value, minuteInput.value);
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          cancelTaskTimeEdit();
+        }
+      });
     });
   });
 
@@ -376,8 +408,14 @@ function renderTaskList(tasks) {
 
 function addTask() {
   const text = taskInput.value.trim();
-  const time = taskTimeInput.value;
+  const time = buildTimeValue(taskHourInput.value, taskMinuteInput.value);
   if (!text) {
+    return;
+  }
+
+  if (time === null) {
+    taskHourInput.value = "";
+    taskMinuteInput.value = "";
     return;
   }
 
@@ -390,7 +428,9 @@ function addTask() {
   entry.tasks.push({ text, time, done: false, memo: "" });
   selectedTaskIndex = entry.tasks.length - 1;
   taskInput.value = "";
-  taskTimeInput.value = "";
+  taskHourInput.value = "";
+  taskMinuteInput.value = "";
+  editingTaskTimeIndex = null;
   persistNotes();
   renderSelectedDate();
   renderCalendar();
@@ -400,6 +440,7 @@ function addTask() {
 function selectDate(dateKey) {
   selectedDate = dateKey;
   selectedTaskIndex = null;
+  editingTaskTimeIndex = null;
   renderCalendar();
   renderSelectedDate();
 
@@ -545,7 +586,98 @@ function getTaskDisplayText(task) {
     return "";
   }
 
-  return task.time ? `${task.time} ${task.text}` : task.text;
+  return task.time ? `${formatTimeForButton(task.time)} ${task.text}` : task.text;
+}
+
+function formatTimeForButton(timeValue) {
+  if (!timeValue) {
+    return "시간";
+  }
+
+  const [hourText, minuteText] = timeValue.split(":");
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (!Number.isInteger(hour) || !Number.isInteger(minute)) {
+    return "시간";
+  }
+
+  const period = hour >= 12 ? "오후" : "오전";
+  const displayHour = hour % 12 || 12;
+  return `${period} ${displayHour}시 ${minute}분`;
+}
+
+function getTimePart(timeValue, part) {
+  if (!timeValue) {
+    return "";
+  }
+
+  const [hour, minute] = timeValue.split(":");
+  return part === "hour" ? String(Number(hour)) : String(Number(minute));
+}
+
+function buildTimeValue(hourValue, minuteValue) {
+  const hourText = String(hourValue).trim();
+  const minuteText = String(minuteValue).trim();
+
+  if (!hourText && !minuteText) {
+    return "";
+  }
+
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (
+    !Number.isInteger(hour) ||
+    !Number.isInteger(minute) ||
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59
+  ) {
+    return null;
+  }
+
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+function commitTaskTimeEdit(index, hourValue, minuteValue) {
+  const entry = getEntryForSelectedDate();
+  const task = entry.tasks?.[index];
+
+  if (!task) {
+    cancelTaskTimeEdit();
+    return;
+  }
+
+  const nextTime = buildTimeValue(hourValue, minuteValue);
+  editingTaskTimeIndex = null;
+
+  if (nextTime !== null) {
+    task.time = nextTime;
+    persistNotes();
+    renderCalendar();
+  }
+
+  selectedTaskIndex = index;
+  renderSelectedDate();
+}
+
+function cancelTaskTimeEdit() {
+  editingTaskTimeIndex = null;
+  renderSelectedDate();
+}
+
+function focusTaskTimeEditor(index) {
+  requestAnimationFrame(() => {
+    const hourInput = taskList.querySelector(`.task-item-time-hour[data-index="${index}"]`);
+    if (!hourInput) {
+      return;
+    }
+
+    hourInput.focus();
+    hourInput.select();
+  });
 }
 
 function formatDateKey(date) {

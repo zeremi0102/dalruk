@@ -414,11 +414,34 @@ textarea {
   gap: 10px;
 }
 
-.task-time-input {
-  width: 118px;
-  flex: 0 0 118px;
-  cursor: pointer;
+.task-time-create {
+  width: 132px;
+  flex: 0 0 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px 12px;
+  background: #fffdfa;
+}
+
+.task-time-part {
+  width: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
   text-align: center;
+  font-size: 0.96rem;
+}
+
+.task-time-part:focus {
+  outline: none;
+}
+
+.task-time-separator {
+  color: var(--muted);
 }
 
 .task-form input,
@@ -471,16 +494,40 @@ textarea:disabled {
   background: rgba(255, 233, 224, 0.65);
 }
 
-.task-item-time {
-  width: 92px;
-  flex: 0 0 92px;
+.task-item-time-button,
+.task-item-time-editor {
+  width: 120px;
+  flex: 0 0 120px;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px;
   background: #fffdfa;
   color: var(--ink);
-  cursor: pointer;
+}
+
+.task-item-time-button {
   text-align: center;
+  cursor: pointer;
+}
+
+.task-item-time-editor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.task-item-time-part {
+  width: 30px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  font-size: 0.92rem;
+}
+
+.task-item-time-part:focus {
+  outline: none;
 }
 
 .task-select {
