@@ -578,7 +578,7 @@ function getTaskDisplayText(task) {
 }
 
 function syncAddTimeDisplay() {
-  taskTimePickerLabel.textContent = formatTimeForButton(draftAddTime);
+  taskTimePickerLabel.textContent = draftAddTime ? formatTimeForButton(draftAddTime) : "시간 설정";
 }
 
 function openTimePicker(type, index = null) {
