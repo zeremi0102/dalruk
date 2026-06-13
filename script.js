@@ -16,6 +16,7 @@ const topBarClock = document.getElementById("topBarClock");
 const topBarDate = document.getElementById("topBarDate");
 const homeButton = document.getElementById("homeButton");
 const characterTitle = document.querySelector(".character-stage h1");
+const taskPreviewColors = ["peach", "mint", "sky", "lavender", "sand"];
 
 const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
 const storageKeys = {
@@ -231,7 +232,7 @@ function renderCalendar() {
     const dateKey = formatDateKey(date);
     const entry = notesByDate[dateKey];
     const isCurrentMonth = date.getMonth() === month;
-    const preview = buildPreview(entry);
+    const preview = buildDayPreview(entry);
 
     daysHtml.push(`
       <button class="calendar-day ${isCurrentMonth ? "" : "other-month"} ${dateKey === selectedDate ? "selected" : ""}" data-date="${dateKey}">
@@ -434,11 +435,49 @@ function buildPreview(entry, includeFallback = false) {
   return includeFallback ? "등록된 메모나 체크리스트가 없어요" : "메모 없음";
 }
 
+function buildDayPreview(entry) {
+  if (!entry) {
+    return `<span class="day-preview-empty">메모 없음</span>`;
+  }
+
+  if (entry.tasks?.length) {
+    return entry.tasks
+      .slice(0, 2)
+      .map((task, index) => {
+        const colorName = taskPreviewColors[index % taskPreviewColors.length];
+        const doneClass = task.done ? " is-done" : "";
+
+        return `
+          <span class="day-task-chip${doneClass}">
+            <span class="day-task-label day-task-label--${colorName}"></span>
+            <span class="day-task-text">${escapeHtml(task.text)}</span>
+          </span>
+        `;
+      })
+      .join("");
+  }
+
+  if (entry.memo) {
+    return `<span class="day-preview-empty">${escapeHtml(entry.memo)}</span>`;
+  }
+
+  return `<span class="day-preview-empty">메모 없음</span>`;
+}
+
 function formatDateKey(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function loadJson(key, fallback) {
