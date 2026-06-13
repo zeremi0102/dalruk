@@ -505,8 +505,8 @@ textarea:disabled {
 
 .task-item-time-button,
 .task-item-time-editor {
-  width: 184px;
-  flex: 0 0 184px;
+  width: 214px;
+  flex: 0 0 214px;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 8px 10px;
@@ -515,10 +515,11 @@ textarea:disabled {
 }
 
 .task-item-time-button {
-  text-align: center;
+  text-align: left;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 0.88rem;
+  font-size: 0.8rem;
+  overflow: visible;
 }
 
 .task-item-time-editor {
