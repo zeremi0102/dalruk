@@ -482,7 +482,7 @@ textarea:disabled {
 
 .task-item {
   display: grid;
-  grid-template-columns: 300px minmax(0, 1fr) auto;
+  grid-template-columns: 170px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
@@ -506,11 +506,11 @@ textarea:disabled {
 .task-item-time-button,
 .task-item-time-editor {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   border-radius: 999px;
   padding: 8px 10px;
-  background: #ffd9c9;
-  color: #5f2f1f;
+  background: transparent;
+  color: var(--ink);
 }
 
 .task-item-time-button {
