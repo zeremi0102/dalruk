@@ -855,6 +855,10 @@ textarea:disabled {
   margin-top: 0;
 }
 
+#memoLabel {
+  margin-top: 18px;
+}
+
 .checklist-tool textarea {
   margin-top: 10px;
   height: 120px;
