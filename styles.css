@@ -34,13 +34,16 @@ body {
   color: var(--ink);
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-gutter: stable;
   background: #efebe5;
 }
 
 body.time-picker-open {
-  overflow-x: hidden;
-  overflow-y: hidden;
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  padding-right: var(--time-picker-scrollbar-width, 0);
   touch-action: none;
 }
 

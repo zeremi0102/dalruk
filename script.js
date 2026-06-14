@@ -43,6 +43,7 @@ let selectedTaskIndex = null;
 let draftAddTime = "";
 let dayPreviewScrollTopByDate = {};
 let timePickerTarget = { type: "add", index: null };
+let lockedScrollY = 0;
 let timePickerValue = { period: "오전", hour: 12, minute: 0 };
 
 sortAllTaskEntries();
@@ -604,13 +605,37 @@ function openTimePicker(type, index = null) {
     : getEntryForSelectedDate().tasks?.[index]?.time || "";
   timePickerValue = parseTimeForPicker(currentTime);
   renderTimePickerColumns();
-  document.body.classList.add("time-picker-open");
+  lockPageForTimePicker();
   timePickerOverlay.classList.remove("hidden");
 }
 
 function closeTimePicker() {
-  document.body.classList.remove("time-picker-open");
+  unlockPageForTimePicker();
   timePickerOverlay.classList.add("hidden");
+}
+
+function lockPageForTimePicker() {
+  if (document.body.classList.contains("time-picker-open")) {
+    return;
+  }
+
+  lockedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  const scrollbarWidth = Math.max(window.innerWidth - document.documentElement.clientWidth, 0);
+
+  document.body.style.setProperty("--time-picker-scrollbar-width", `${scrollbarWidth}px`);
+  document.body.style.top = `-${lockedScrollY}px`;
+  document.body.classList.add("time-picker-open");
+}
+
+function unlockPageForTimePicker() {
+  if (!document.body.classList.contains("time-picker-open")) {
+    return;
+  }
+
+  document.body.classList.remove("time-picker-open");
+  document.body.style.removeProperty("--time-picker-scrollbar-width");
+  document.body.style.removeProperty("top");
+  window.scrollTo(0, lockedScrollY);
 }
 
 function parseTimeForPicker(timeValue) {
