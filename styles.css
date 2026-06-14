@@ -892,7 +892,7 @@ textarea:disabled {
 
 .top-bar {
   position: fixed;
-  left: 50%;
+  left: calc(50% - (var(--time-picker-scrollbar-width, 0px) / 2));
   transform: translateX(-50%);
   width: 650px;
   top: 0;
@@ -941,7 +941,7 @@ textarea:disabled {
 
 .bottom-bar {
   position: fixed;
-  left: 50%;
+  left: calc(50% - (var(--time-picker-scrollbar-width, 0px) / 2));
   transform: translateX(-50%);
   width: 650px;
   bottom: 0;
